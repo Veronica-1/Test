@@ -1,0 +1,27 @@
+pip install pyschedule
+# Load pyschedule and create a scenario with ten steps planning horizon
+from pyschedule import Scenario, solvers, plotters
+S = Scenario('hello_pyschedule',horizon=10)
+
+# Create two resources
+Alice, Bob = S.Resource('Alice'), S.Resource('Bob')
+
+# Create three tasks with lengths 1,2 and 3
+cook, wash, clean = S.Task('cook',1), S.Task('wash',2), S.Task('clean',3)
+
+# Assign tasks to resources, either Alice or Bob
+cook += Alice|Bob
+wash += Alice|Bob
+clean += Alice|Bob
+
+# Solve and print solution
+S.use_makespan_objective()
+solvers.mip.solve(S,msg=1)
+
+# Print the solution
+print(S.solution())INFO: execution time for solving mip (sec) = 0.025879621505737305
+INFO: objective = 3.0
+[(clean, Alice, 0, 3), (cook, Bob, 0, 1), (wash, Bob, 1, 3), (MakeSpan, Alice, 3, 4)]
+%matplotlib inline
+plotters.matplotlib.plot(S,fig_size=(10,5))
+solvers.mip.solve(S,kind='CPLEX')
